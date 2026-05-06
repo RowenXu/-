@@ -28,25 +28,35 @@ from notifiers import build_notifiers
 # ---------------------------------------------------------------------------
 
 _GAME_EMOJI: dict[str, str] = {
-    "league-of-legends": "🏆",
-    "cs-go": "🔫",
-    "dota-2": "⚔️",
+    "cs-go": "🔫",   # Counter-Strike 2
+    "cs2": "🔫",
     "valorant": "🎯",
+    "league-of-legends": "🏆",
+    "dota-2": "⚔️",
     "overwatch-2": "🦸",
     "r6-siege": "🛡️",
     "rocket-league": "🚀",
     "starcraft-2": "🛸",
 }
 
+# Human-readable display names for the primary games
+_GAME_DISPLAY: dict[str, str] = {
+    "cs-go": "Counter-Strike 2",
+    "cs2": "Counter-Strike 2",
+    "valorant": "VALORANT",
+}
 
-def _emoji(game: str) -> str:
-    return _GAME_EMOJI.get(game, "🎮")
+
+def _display_name(game: str) -> str:
+    return _GAME_DISPLAY.get(game, game.upper().replace("-", " "))
 
 
 def _group_by_game(matches: list[Match]) -> dict[str, list[Match]]:
     groups: dict[str, list[Match]] = {}
     for m in matches:
-        groups.setdefault(m.game, []).append(m)
+        # Normalise CS2 slugs so both appear under one section
+        key = "cs-go" if m.game == "cs2" else m.game
+        groups.setdefault(key, []).append(m)
     return groups
 
 
@@ -64,8 +74,8 @@ def format_digest(matches: list[Match]) -> str:
     groups = _group_by_game(matches)
 
     for game, game_matches in groups.items():
-        emoji = _emoji(game)
-        lines.append(f"\n{emoji}  {game.upper().replace('-', ' ')}")
+        emoji = _GAME_EMOJI.get(game, "🎮")
+        lines.append(f"\n{emoji}  {_display_name(game)}")
         lines.append("-" * 36)
         for m in game_matches:
             time_str = (

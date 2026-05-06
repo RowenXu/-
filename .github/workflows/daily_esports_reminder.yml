@@ -31,7 +31,7 @@ jobs:
           # --- 数据源 ---
           # 在 Repo Settings → Secrets 中添加以下密钥（均为可选）：
           PANDASCORE_TOKEN: ${{ secrets.PANDASCORE_TOKEN }}
-          ESPORTS_GAMES: ${{ vars.ESPORTS_GAMES }}   # 逗号分隔的游戏列表
+          ESPORTS_GAMES: ${{ vars.ESPORTS_GAMES }}   # 默认: cs-go,cs2,valorant
 
           # --- 通知渠道（至少配置一种，否则仅输出到日志）---
           # Telegram

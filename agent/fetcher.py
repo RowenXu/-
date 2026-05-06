@@ -56,12 +56,13 @@ class Match:
 
 _PANDASCORE_BASE = "https://api.pandascore.co"
 
+# Primary games: CS2 and Valorant.
+# PandaScore uses "cs-go" as the slug for both CS:GO and CS2; "cs2" is also
+# tried for platforms that have migrated to the new slug.
 _DEFAULT_GAMES = [
-    "league-of-legends",
-    "cs-go",
-    "dota-2",
+    "cs-go",   # Counter-Strike 2 / CS:GO
+    "cs2",     # CS2 on newer PandaScore endpoints (no-op if slug not found)
     "valorant",
-    "overwatch-2",
 ]
 
 
@@ -145,17 +146,9 @@ def fetch_from_pandascore(token: str, games: list[str]) -> list[Match]:
 # ---------------------------------------------------------------------------
 
 _DEMO_MATCHES: list[dict] = [
+    # --- Counter-Strike 2 ---
     {
-        "id": "demo-1",
-        "game": "league-of-legends",
-        "tournament": "LCK Spring 2025",
-        "team_a": "T1",
-        "team_b": "Gen.G",
-        "scheduled_at": None,
-        "stream_url": "https://www.twitch.tv/lck",
-    },
-    {
-        "id": "demo-2",
+        "id": "demo-cs2-1",
         "game": "cs-go",
         "tournament": "ESL Pro League Season 20",
         "team_a": "NaVi",
@@ -164,7 +157,26 @@ _DEMO_MATCHES: list[dict] = [
         "stream_url": "https://www.twitch.tv/esl_csgo",
     },
     {
-        "id": "demo-3",
+        "id": "demo-cs2-2",
+        "game": "cs-go",
+        "tournament": "BLAST Premier Spring 2025",
+        "team_a": "Team Vitality",
+        "team_b": "G2 Esports",
+        "scheduled_at": None,
+        "stream_url": "https://www.twitch.tv/blastpremier",
+    },
+    # --- Valorant ---
+    {
+        "id": "demo-val-1",
+        "game": "valorant",
+        "tournament": "VCT 2025 EMEA",
+        "team_a": "Team Heretics",
+        "team_b": "Fnatic",
+        "scheduled_at": None,
+        "stream_url": "https://www.twitch.tv/valorant",
+    },
+    {
+        "id": "demo-val-2",
         "game": "valorant",
         "tournament": "VCT 2025 Americas",
         "team_a": "Sentinels",
