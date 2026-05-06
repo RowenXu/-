@@ -1,0 +1,49 @@
+name: 每日电竞赛事提醒
+
+on:
+  schedule:
+    # 每天 UTC 08:00 运行（北京时间 16:00）
+    - cron: "0 8 * * *"
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  remind:
+    name: 发送每日赛事提醒
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run esports reminder agent
+        working-directory: agent
+        env:
+          # --- 数据源 ---
+          # 在 Repo Settings → Secrets 中添加以下密钥（均为可选）：
+          PANDASCORE_TOKEN: ${{ secrets.PANDASCORE_TOKEN }}
+          ESPORTS_GAMES: ${{ vars.ESPORTS_GAMES }}   # 逗号分隔的游戏列表
+
+          # --- 通知渠道（至少配置一种，否则仅输出到日志）---
+          # Telegram
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Discord
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          # Email (SMTP)
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python reminder.py
