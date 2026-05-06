@@ -43,7 +43,7 @@ class Match:
         time_str = (
             self.scheduled_at.astimezone(TZ_CST).strftime("%H:%M (UTC+8)")
             if self.scheduled_at
-            else "TBD"
+            else "时间待定"
         )
         return (
             f"[{self.game}] {self.tournament}\n"
@@ -78,8 +78,8 @@ def _parse_game_slug(match_json: dict) -> str:
 
 def _parse_team(side: dict | None) -> str:
     if not side:
-        return "TBD"
-    return side.get("name") or "TBD"
+        return "待定"
+    return side.get("name") or "待定"
 
 
 def _parse_dt(raw: str | None) -> datetime | None:
@@ -115,7 +115,7 @@ def fetch_from_pandascore(token: str, games: list[str]) -> list[Match]:
             resp = requests.get(url, headers=headers, params=params, timeout=10)
             resp.raise_for_status()
         except requests.RequestException as exc:
-            print(f"[fetcher] PandaScore request failed for {game}: {exc}")
+            print(f"[fetcher] PandaScore 请求失败（{game}）：{exc}")
             continue
 
         for item in resp.json():
@@ -136,7 +136,7 @@ def fetch_from_pandascore(token: str, games: list[str]) -> list[Match]:
                 Match(
                     id=str(item.get("id", "")),
                     game=_parse_game_slug(item),
-                    tournament=tournament or "Unknown Tournament",
+                    tournament=tournament or "未知赛事",
                     team_a=team_a,
                     team_b=team_b,
                     scheduled_at=_parse_dt(item.get("scheduled_at")),
@@ -220,11 +220,11 @@ def fetch_today_matches() -> list[Match]:
     games = [g.strip() for g in games_env.split(",")] if games_env else _DEFAULT_GAMES
 
     if token:
-        print("[fetcher] Using PandaScore API …")
+        print("[fetcher] 正在调用 PandaScore API …")
         matches = fetch_from_pandascore(token, games)
         if matches:
             return matches
-        print("[fetcher] PandaScore returned no matches; falling back to demo data.")
+        print("[fetcher] PandaScore 未返回赛事，回退到演示数据。")
 
-    print("[fetcher] Running in demo mode (set PANDASCORE_TOKEN to use live data).")
+    print("[fetcher] 当前为演示模式（设置 PANDASCORE_TOKEN 以拉取实时数据）。")
     return fetch_demo()

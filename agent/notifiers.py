@@ -71,9 +71,9 @@ class TelegramNotifier(BaseNotifier):
         try:
             resp = requests.post(url, json=payload, timeout=10)
             resp.raise_for_status()
-            print(f"[notifier:telegram] Message sent to chat {self.chat_id}.")
+            print(f"[notifier:telegram] 已发送至会话 {self.chat_id}。")
         except requests.RequestException as exc:
-            print(f"[notifier:telegram] Failed to send message: {exc}")
+            print(f"[notifier:telegram] 发送失败：{exc}")
 
 
 # ---------------------------------------------------------------------------
@@ -94,9 +94,9 @@ class DiscordNotifier(BaseNotifier):
         try:
             resp = requests.post(self.webhook_url, json=payload, timeout=10)
             resp.raise_for_status()
-            print("[notifier:discord] Message sent.")
+            print("[notifier:discord] 已发送。")
         except requests.RequestException as exc:
-            print(f"[notifier:discord] Failed to send message: {exc}")
+            print(f"[notifier:discord] 发送失败：{exc}")
 
 
 # ---------------------------------------------------------------------------
@@ -119,7 +119,7 @@ class EmailNotifier(BaseNotifier):
 
     def send(self, message: str) -> None:
         msg = MIMEText(message, "plain", "utf-8")
-        msg["Subject"] = "🎮 Today's Esports Schedule"
+        msg["Subject"] = "🎮 今日电竞赛事提醒"
         msg["From"] = self.from_addr
         msg["To"] = self.to_addr
 
@@ -129,9 +129,9 @@ class EmailNotifier(BaseNotifier):
                 smtp.starttls()
                 smtp.login(self.user, self.password)
                 smtp.sendmail(self.from_addr, [self.to_addr], msg.as_string())
-            print(f"[notifier:email] Email sent to {self.to_addr}.")
+            print(f"[notifier:email] 邮件已发送至 {self.to_addr}。")
         except Exception as exc:  # noqa: BLE001
-            print(f"[notifier:email] Failed to send email: {exc}")
+            print(f"[notifier:email] 邮件发送失败：{exc}")
 
 
 # ---------------------------------------------------------------------------
@@ -148,6 +148,6 @@ def build_notifiers() -> list[BaseNotifier]:
     notifiers: list[BaseNotifier] = [StdoutNotifier()]
     for n in candidates:
         if n.is_configured():
-            print(f"[notifier] Enabled: {n.name}")
+            print(f"[notifier] 已启用渠道：{n.name}")
             notifiers.append(n)
     return notifiers
