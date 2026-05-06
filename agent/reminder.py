@@ -17,9 +17,9 @@ The agent:
 from __future__ import annotations
 
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 
-from fetcher import fetch_today_matches, Match
+from fetcher import fetch_today_matches, Match, TZ_CST
 from notifiers import build_notifiers
 
 
@@ -61,9 +61,9 @@ def _group_by_game(matches: list[Match]) -> dict[str, list[Match]]:
 
 
 def format_digest(matches: list[Match]) -> str:
-    today_str = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d")
+    today_str = datetime.now(tz=TZ_CST).strftime("%Y-%m-%d")
     lines: list[str] = [
-        f"🎮 每日电竞赛事提醒 – {today_str}",
+        f"🎮 每日电竞赛事提醒 – {today_str} (UTC+8)",
         "=" * 42,
     ]
 
@@ -79,7 +79,7 @@ def format_digest(matches: list[Match]) -> str:
         lines.append("-" * 36)
         for m in game_matches:
             time_str = (
-                m.scheduled_at.strftime("%H:%M UTC")
+                m.scheduled_at.astimezone(TZ_CST).strftime("%H:%M (UTC+8)")
                 if m.scheduled_at
                 else "时间待定"
             )

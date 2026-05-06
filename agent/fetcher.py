@@ -16,7 +16,10 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+
+# All times are presented in UTC+8 (Beijing / CST)
+TZ_CST = timezone(timedelta(hours=8), name="UTC+8")
 from typing import List
 
 import requests
@@ -38,7 +41,7 @@ class Match:
 
     def __str__(self) -> str:
         time_str = (
-            self.scheduled_at.strftime("%H:%M UTC")
+            self.scheduled_at.astimezone(TZ_CST).strftime("%H:%M (UTC+8)")
             if self.scheduled_at
             else "TBD"
         )
@@ -90,8 +93,12 @@ def _parse_dt(raw: str | None) -> datetime | None:
 
 def fetch_from_pandascore(token: str, games: list[str]) -> list[Match]:
     """Return today's upcoming / live matches from PandaScore."""
-    today = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT00:00:00Z")
-    tomorrow = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT23:59:59Z")
+    # "Today" is computed in UTC+8, then converted to UTC for the API filter.
+    now_cst = datetime.now(tz=TZ_CST)
+    start_cst = now_cst.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_cst = now_cst.replace(hour=23, minute=59, second=59, microsecond=0)
+    today = start_cst.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    tomorrow = end_cst.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     headers = {"Authorization": f"Bearer {token}"}
     matches: list[Match] = []

@@ -7,7 +7,7 @@
 - 🔫 **CS2** + 🎯 **VALORANT** 为主要跟踪游戏（可自定义扩展）
 - 📡 数据来源：[PandaScore API](https://developers.pandascore.co/)（免费 tier），无 Token 时自动使用演示数据
 - 📣 支持多通知渠道：控制台输出、Telegram Bot、Discord Webhook、Email (SMTP)
-- ⏰ 通过 **GitHub Actions** 每天 UTC 08:00（北京时间 16:00）定时运行，也可手动触发
+- ⏰ 通过 **GitHub Actions** 每天北京时间 16:00（UTC+8）定时运行，也可手动触发；所有显示时间均使用 UTC+8 时区
 
 ## 快速开始
 

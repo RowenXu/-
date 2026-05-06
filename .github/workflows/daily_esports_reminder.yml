@@ -2,7 +2,7 @@ name: 每日电竞赛事提醒
 
 on:
   schedule:
-    # 每天 UTC 08:00 运行（北京时间 16:00）
+    # 每天北京时间 16:00（UTC+8）运行，对应 UTC 08:00
     - cron: "0 8 * * *"
   # 允许手动触发
   workflow_dispatch:
